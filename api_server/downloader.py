@@ -3,6 +3,7 @@ import asyncio
 import os
 import uuid
 import imageio_ffmpeg
+import shutil
 
 # الحصول على مسار ملف ffmpeg المدمج مع المكتبة
 FFMPEG_PATH = imageio_ffmpeg.get_ffmpeg_exe()
@@ -32,7 +33,12 @@ def _extract_info(url: str):
         for cookie_file in cookie_files:
             full_path = os.path.join(base_dir, cookie_file)
             if os.path.exists(full_path):
-                ydl_opts['cookiefile'] = full_path
+                tmp_cookie_path = os.path.join('/tmp', f"tmp_{cookie_file}")
+                try:
+                    shutil.copy2(full_path, tmp_cookie_path)
+                    ydl_opts['cookiefile'] = tmp_cookie_path
+                except Exception:
+                    ydl_opts['cookiefile'] = full_path
                 cookie_found = True
                 break
         if cookie_found:
@@ -84,7 +90,12 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
         for cookie_file in cookie_files:
             full_path = os.path.join(base_dir, cookie_file)
             if os.path.exists(full_path):
-                ydl_opts['cookiefile'] = full_path
+                tmp_cookie_path = os.path.join('/tmp', f"tmp_{cookie_file}")
+                try:
+                    shutil.copy2(full_path, tmp_cookie_path)
+                    ydl_opts['cookiefile'] = tmp_cookie_path
+                except Exception:
+                    ydl_opts['cookiefile'] = full_path
                 cookie_found = True
                 break
         if cookie_found:
@@ -108,4 +119,3 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
 
 async def download_media(url: str, format_id: str, is_audio: bool = False, start_time: str = None, end_time: str = None):
     return await asyncio.to_thread(_download, url, format_id, is_audio, start_time, end_time)
-
