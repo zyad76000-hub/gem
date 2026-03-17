@@ -12,7 +12,6 @@ def _extract_info(url: str):
         'quiet': True,
         'no_warnings': True,
         'noplaylist': True,
-        'impersonate': 'safari',
         'extractor_args': {
             'youtube': [
                 'player_client=android,ios,tv,web',
@@ -57,7 +56,6 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
         'no_warnings': True,
         'merge_output_format': 'mp4',
         'ffmpeg_location': FFMPEG_PATH, # تحديد مسار ffmpeg صراحة
-        'impersonate': 'safari',
         'extractor_args': {
             'youtube': [
                 'player_client=android,ios,tv,web',
@@ -90,11 +88,6 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         ext = 'mp3' if is_audio else info.get('ext', 'mp4')
-        return f"{filename}.{ext}"
-
-async def download_media(url: str, format_id: str, is_audio: bool = False, start_time: str = None, end_time: str = None):
-    return await asyncio.to_thread(_download, url, format_id, is_audio, start_time, end_time)
-
         return f"{filename}.{ext}"
 
 async def download_media(url: str, format_id: str, is_audio: bool = False, start_time: str = None, end_time: str = None):
