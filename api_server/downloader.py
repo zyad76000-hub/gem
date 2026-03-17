@@ -12,7 +12,7 @@ def _extract_info(url: str):
         'quiet': True,
         'no_warnings': True,
         'noplaylist': True,
-        'impersonate': 'chrome',
+        'impersonate': 'safari',
         'extractor_args': {
             'youtube': [
                 'player_client=android,ios,tv,web',
@@ -20,7 +20,7 @@ def _extract_info(url: str):
             ]
         },
         'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
             'Accept-Language': 'en-US,en;q=0.9',
         }
     }
@@ -57,7 +57,7 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
         'no_warnings': True,
         'merge_output_format': 'mp4',
         'ffmpeg_location': FFMPEG_PATH, # تحديد مسار ffmpeg صراحة
-        'impersonate': 'chrome',
+        'impersonate': 'safari',
         'extractor_args': {
             'youtube': [
                 'player_client=android,ios,tv,web',
@@ -65,7 +65,7 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
             ]
         },
         'http_headers': {
-            'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
+            'User-Agent': 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/17.0 Safari/605.1.15',
             'Accept-Language': 'en-US,en;q=0.9',
         }
     }
@@ -90,6 +90,11 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(url, download=True)
         ext = 'mp3' if is_audio else info.get('ext', 'mp4')
+        return f"{filename}.{ext}"
+
+async def download_media(url: str, format_id: str, is_audio: bool = False, start_time: str = None, end_time: str = None):
+    return await asyncio.to_thread(_download, url, format_id, is_audio, start_time, end_time)
+
         return f"{filename}.{ext}"
 
 async def download_media(url: str, format_id: str, is_audio: bool = False, start_time: str = None, end_time: str = None):
