@@ -14,7 +14,7 @@ def _extract_info(url: str):
         'noplaylist': True,
         'extractor_args': {
             'youtube': [
-                'player_client=android,ios,tv,web',
+                'player_client=android,ios',
                 'player_skip=webpage'
             ]
         },
@@ -24,10 +24,18 @@ def _extract_info(url: str):
         }
     }
     
+    base_dirs = [os.getcwd(), os.path.dirname(__file__), os.path.dirname(os.path.dirname(__file__))]
     cookie_files = ["cookies.txt", "youtube.com_cookies.txt", "cookies.netscape.txt"]
-    for cookie_file in cookie_files:
-        if os.path.exists(cookie_file):
-            ydl_opts['cookiefile'] = cookie_file
+    
+    cookie_found = False
+    for base_dir in base_dirs:
+        for cookie_file in cookie_files:
+            full_path = os.path.join(base_dir, cookie_file)
+            if os.path.exists(full_path):
+                ydl_opts['cookiefile'] = full_path
+                cookie_found = True
+                break
+        if cookie_found:
             break
             
     with yt_dlp.YoutubeDL(ydl_opts) as ydl:
@@ -58,7 +66,7 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
         'ffmpeg_location': FFMPEG_PATH, # تحديد مسار ffmpeg صراحة
         'extractor_args': {
             'youtube': [
-                'player_client=android,ios,tv,web',
+                'player_client=android,ios',
                 'player_skip=webpage'
             ]
         },
@@ -68,10 +76,18 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
         }
     }
 
+    base_dirs = [os.getcwd(), os.path.dirname(__file__), os.path.dirname(os.path.dirname(__file__))]
     cookie_files = ["cookies.txt", "youtube.com_cookies.txt", "cookies.netscape.txt"]
-    for cookie_file in cookie_files:
-        if os.path.exists(cookie_file):
-            ydl_opts['cookiefile'] = cookie_file
+    
+    cookie_found = False
+    for base_dir in base_dirs:
+        for cookie_file in cookie_files:
+            full_path = os.path.join(base_dir, cookie_file)
+            if os.path.exists(full_path):
+                ydl_opts['cookiefile'] = full_path
+                cookie_found = True
+                break
+        if cookie_found:
             break
 
     if start_time and end_time:
@@ -92,3 +108,4 @@ def _download(url: str, format_id: str, is_audio: bool = False, start_time: str 
 
 async def download_media(url: str, format_id: str, is_audio: bool = False, start_time: str = None, end_time: str = None):
     return await asyncio.to_thread(_download, url, format_id, is_audio, start_time, end_time)
+
